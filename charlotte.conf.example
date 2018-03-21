@@ -1,0 +1,23 @@
+{
+    "spools": {
+        "example1": {
+            "directories": [  "/unified/example1" ], 
+            "filename": "snort.log"
+        }, 
+        "example2": {
+            "directories": [  "/unified/example2/1", "/unified/example2/2" ], 
+            "filename": "snort.log"
+        }
+    }, 
+    "global": {
+        "signature_map": "/etc/snort/sid-msg.map/sid-msg.map",
+        "generator_map": "/etc/snort/gen-msg.map/gen-msg.map",
+        "classification_map": "/etc/snort/classification.config/classification.config"
+    },
+    "plugin_snortdb": {
+        "server": "localhost",
+        "user": "charlotte",
+        "password": "secretpass",
+        "db": "charlotte"
+    }
+}

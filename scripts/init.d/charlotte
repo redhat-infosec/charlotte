@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/charlotte
+#
+# Charlotte alert processor for snort
+#
+# chkconfig: 2345 40 60
+# description: loads unified2 alert files into a DB for processing
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Read configuration
+. /etc/sysconfig/charlotte
+
+# Exit if no config file
+[ -n "$CONFIG" ] || exit 1
+
+case "$1" in
+    start)
+        if [ -e /var/run/charlotte.pid ] && ps -p $(cat /var/run/charlotte.pid) &> /dev/null; then
+            echo "Charlotte already running"
+            failure
+            echo
+            exit 1
+        fi
+
+        echo -n "Starting charlotte: "
+        daemon /usr/bin/charlotte "$CONFIG"
+        touch /var/lock/subsys/charlotte
+
+        sleep 3
+        if ! pgrep charlotte &> /dev/null; then
+            failure
+            echo
+            exit 1
+        else
+            success
+            echo
+            echo
+            exit 0
+        fi
+    ;;
+    stop)
+        echo -n "Shutting down charlotte: "
+        killproc -d 60 charlotte
+        rm -f /var/lock/subsys/charlotte
+        success
+        echo
+        echo
+    ;;
+    restart)
+        $0 stop
+        $0 start
+    ;;
+    status)
+        if [ -e /var/run/charlotte.pid ] && ps -p $(cat /var/run/charlotte.pid) &> /dev/null; then
+            echo "Charlotte running at PID $(cat /var/run/charlotte.pid)"
+            exit 0
+        else
+            echo "Charlotte not running"
+            exit 1
+        fi
+    ;;
+
+    *)
+        echo "Usage: charlotte {start|stop|restart}"
+        exit 1
+    ;;
+esac

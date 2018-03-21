@@ -1,0 +1,53 @@
+#!/usr/bin/python 
+
+import charlotte
+import sys
+import json
+from multiprocessing import Queue, Event, Manager, Process
+import time
+import logging
+import daemon
+#import lockfile.pidlockfile
+from daemon import pidlockfile
+
+log = logging.getLogger("charlotte")
+pidfile = "/var/run/charlotte.pid"
+
+def run():
+    try:
+        config = charlotte.Config(sys.argv[1])
+        maps = charlotte.Maps(config)
+    except charlotte.CharlotteConfigError, e:
+        print("ERROR: %s" % e)
+        raise SystemExit(1)
+
+    queue = Queue(100)
+
+    reader = charlotte.EventReader(config, queue)
+    try:
+        if len(sys.argv) > 2 and sys.argv[2] == "test":
+            writer = charlotte.TextOutput(config, queue, maps, reader)
+        else:
+            writer = charlotte.DatabaseOutput(config, queue, maps)
+
+    except Exception, e:
+        log.error("There was an error starting Charlotte: %s" % e)
+        raise SystemExit(2)
+
+    reader.start()
+
+    writer.process_alerts()
+    raise SystemExit(0)
+
+if __name__ == "__main__":
+
+    try:
+        if len(sys.argv) > 2 and sys.argv[2] == "test":
+            run()
+        else:
+    	    with daemon.DaemonContext(pidfile=daemon.pidlockfile.PIDLockFile(pidfile)):
+                run()
+    except Exception, e:
+	log.exception("Exception %s : %s" % ( Exception, e) )
+	raise SystemExit(3)
+
