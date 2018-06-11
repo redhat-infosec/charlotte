@@ -34,6 +34,7 @@ from Queue import Empty
 from threading import Thread
 from multiprocessing import Process, Event, current_process
 import os
+import struct
 import sys
 import time
 import os.path
