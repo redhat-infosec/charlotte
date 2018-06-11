@@ -28,21 +28,17 @@ import socket
 from idstools import unified2
 from idstools import maps
 from idstools.packet import decode_ethernet
-from idstools.scripts import u2fast, u2spewfoo
-from Queue import Queue
+from idstools.scripts import u2fast
 from Queue import Empty
-from threading import Thread
-from multiprocessing import Process, Event, current_process
+from multiprocessing import Process, Event
 import os
 import struct
-import sys
 import time
 import os.path
 from impacket.ImpactDecoder import EthDecoder
 import MySQLdb
 from binascii import hexlify
 import datetime
-import gc
 import signal
 
 
@@ -338,8 +334,6 @@ class TextOutput(object):
         self.reader = reader
 
     def process_alerts(self):
-        shutdown = False
-
         log.debug("Starting up alert processor")
         self.packet_decoder = EthDecoder()
         try:
@@ -349,7 +343,6 @@ class TextOutput(object):
             log.info("Shutting down readers")
             self.reader.request_close()
             log.info("Clearing queue")
-            shutdown = True
             while not self.queue.empty():
                 self._process_one_alert()
             log.info("Writer waiting on reader closure")
