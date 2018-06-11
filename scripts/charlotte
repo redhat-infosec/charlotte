@@ -2,13 +2,9 @@
 
 import charlotte
 import sys
-import json
-from multiprocessing import Queue, Event, Manager, Process
-import time
+from multiprocessing import Queue
 import logging
 import daemon
-# import lockfile.pidlockfile
-from daemon import pidlockfile
 
 log = logging.getLogger("charlotte")
 pidfile = "/var/run/charlotte.pid"
