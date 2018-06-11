@@ -135,7 +135,7 @@ def Config(config_file_name):
     try:
         with open(config_file_name, "r") as config_file:
             config = json.load(config_file)
-    except Exception, e:
+    except Exception as e:
         raise CharlotteConfigError("Unable to read config file: %s" % e)
 
     # check required fields
@@ -188,7 +188,7 @@ class Maps(object):
                 self.config['global']['signature_map'])
             self.genmap_timestamp = os.path.getmtime(
                 self.config['global']['generator_map'])
-        except Exception, e:
+        except Exception as e:
             raise CharlotteConfigError("Error reading signature maps: %s" % e)
 
         try:
@@ -197,7 +197,7 @@ class Maps(object):
                 self.config['global']['classification_map']))
             self.classmap_timestamp = os.path.getmtime(
                 self.config['global']['classification_map'])
-        except Exception, e:
+        except Exception as e:
             raise CharlotteConfigError("Error reading classification map: %s" %
                                        e)
 
@@ -263,7 +263,7 @@ class EventReader(object):
                 worker.daemon = True
                 worker.start()
                 self.workers.append(worker)
-            except Exception, e:
+            except Exception as e:
                 log.error("Unable to start worker for %s: %s" % (spool, e))
 
     def request_close(self):
@@ -319,7 +319,7 @@ class EventReader(object):
                     time.sleep(1)
         except KeyboardInterrupt:
             pass
-        except Exception, e:
+        except Exception as e:
             log.error("Exception reading alert: %s" % e)
             raise CharlotteEventReaderError(e)
 
@@ -358,20 +358,20 @@ class TextOutput(object):
             return
 
         log.debug("Received message")
-        print event
+        print(event)
         for packet in event['packets']:
-            print self.packet_decoder.decode(packet['data'])
+            print(self.packet_decoder.decode(packet['data']))
         for extradata in event['extra-data']:
-            print extradata
+            print(extradata)
         try:
             u2fast.print_event(event, self.maps, self.maps)
         except Exception:
             log.error("unable to process alert")
-            print "bad alert:"
-            print event
+            print("bad alert:")
+            print(event)
 
     def process_rollover(self, sensor_name, closed, opened):
-        print "File Rollover on sensor %s" % sensor_name
+        print("File Rollover on sensor %s" % sensor_name)
 
     def wait_close(self):
         while not self.queue.empty():
@@ -418,7 +418,7 @@ class DatabaseOutput(object):
                 try:
                     if self.db:
                         self.db.close()
-                except Exception, e:
+                except Exception as e:
                     log.warning("Error closing Database session: %s" % e)
                 self.db = None
 
@@ -435,7 +435,7 @@ class DatabaseOutput(object):
                                               db=self.dbname)
                     connected = True
                     delay = 0
-                except Exception, e:
+                except Exception as e:
                     if delay == 0:
                         delay = 1
                     else:
@@ -459,7 +459,7 @@ class DatabaseOutput(object):
                 cursor.close()
                 success = True
 
-            except Exception, e:
+            except Exception as e:
                 log.warning("Got DB error %s, attempting reconnect" % e)
                 if delay == 0:
                     delay = 1
@@ -469,7 +469,7 @@ class DatabaseOutput(object):
                 if cursor:
                     try:
                         cursor.rollback()
-                    except Exception, e:
+                    except Exception as e:
                         # Oh well, can't roll back.
                         # That's actually fine, just ignore it.
                         log.warning(

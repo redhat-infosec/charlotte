@@ -14,7 +14,7 @@ def run():
     try:
         config = charlotte.Config(sys.argv[1])
         maps = charlotte.Maps(config)
-    except charlotte.CharlotteConfigError, e:
+    except charlotte.CharlotteConfigError as e:
         print("ERROR: %s" % e)
         raise SystemExit(1)
 
@@ -27,7 +27,7 @@ def run():
         else:
             writer = charlotte.DatabaseOutput(config, queue, maps)
 
-    except Exception, e:
+    except Exception as e:
         log.error("There was an error starting Charlotte: %s" % e)
         raise SystemExit(2)
 
@@ -45,6 +45,6 @@ if __name__ == "__main__":
             with daemon.DaemonContext(
                     pidfile=daemon.pidlockfile.PIDLockFile(pidfile)):
                 run()
-    except Exception, e:
+    except Exception as e:
         log.exception('Error occured')
     raise SystemExit(3)
