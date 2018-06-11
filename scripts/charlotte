@@ -1,4 +1,4 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
 import charlotte
 import sys
@@ -7,11 +7,12 @@ from multiprocessing import Queue, Event, Manager, Process
 import time
 import logging
 import daemon
-#import lockfile.pidlockfile
+# import lockfile.pidlockfile
 from daemon import pidlockfile
 
 log = logging.getLogger("charlotte")
 pidfile = "/var/run/charlotte.pid"
+
 
 def run():
     try:
@@ -45,9 +46,9 @@ if __name__ == "__main__":
         if len(sys.argv) > 2 and sys.argv[2] == "test":
             run()
         else:
-    	    with daemon.DaemonContext(pidfile=daemon.pidlockfile.PIDLockFile(pidfile)):
+            with daemon.DaemonContext(
+                    pidfile=daemon.pidlockfile.PIDLockFile(pidfile)):
                 run()
     except Exception, e:
-	log.exception("Exception %s : %s" % ( Exception, e) )
-	raise SystemExit(3)
-
+        log.exception('Error occured')
+    raise SystemExit(3)
