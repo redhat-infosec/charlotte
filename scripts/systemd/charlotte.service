@@ -1,0 +1,13 @@
+[Unit]
+Description=Charlotte daemon
+After=network.target
+
+[Service]
+Type=simple
+Environment="/etc/sysconfig/charlotte"
+ExecStart=/usr/bin/charlotte $CONFIG
+PrivateTmp=true
+
+
+[Install]
+WantedBy=multi-user.target
