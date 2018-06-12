@@ -1,0 +1,11 @@
+[Unit]
+Description=Charlotte daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/charlotte /etc/charlotte.conf
+
+
+[Install]
+WantedBy=multi-user.target
