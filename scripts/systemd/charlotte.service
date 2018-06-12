@@ -4,7 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/charlotte /etc/charlotte.conf
+Environment="/etc/sysconfig/charlotte"
+ExecStart=/usr/bin/charlotte $CONFIG
+PrivateTmp=true
 
 
 [Install]
